@@ -4,8 +4,8 @@ CREATE DATABASE ehoteldb;
 -- Use the database
 \c ehoteldb;
 
--- Create HotelChain table
-CREATE TABLE HotelChain (
+-- Create HotelChains table
+CREATE TABLE HotelChains (
     id SERIAL PRIMARY KEY,
     street_number INT,
     street_name VARCHAR(255),
@@ -14,20 +14,20 @@ CREATE TABLE HotelChain (
 
 -- Create HotelChainPhoneNumbers table
 CREATE TABLE HotelChainPhoneNumbers (
-    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChains(id) ON DELETE CASCADE,
     phone_number VARCHAR(20) UNIQUE
 );
 
 -- Create HotelChainEmails table
 CREATE TABLE HotelChainEmails (
-    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChains(id) ON DELETE CASCADE,
     email VARCHAR(100) UNIQUE
 );
 
 -- Create Hotels table
 CREATE TABLE Hotels (
     id SERIAL PRIMARY KEY,
-    hotel_chain_id INT REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT REFERENCES HotelChains(id) ON DELETE CASCADE,
     street_number INT,
     street_name VARCHAR(255),
     num_rooms INT,
@@ -100,7 +100,7 @@ CREATE TABLE Employees (
 );
 
 -- Create Manager table
-CREATE TABLE Manager (
+CREATE TABLE Managers (
     employee_id INT PRIMARY KEY REFERENCES Employees(id) ON DELETE CASCADE,
     hotel_id INT UNIQUE REFERENCES Hotels(id) ON DELETE CASCADE
 );
@@ -153,7 +153,7 @@ CREATE TABLE BookingArchives (
 );
 
 -- Insert random data
-INSERT INTO HotelChain (street_number, street_name, num_hotels) VALUES
+INSERT INTO HotelChains (street_number, street_name, num_hotels) VALUES
 (101, 'Main St', 5),
 (202, 'Second Ave', 3),
 (303, 'Third Blvd', 7);
@@ -173,5 +173,5 @@ INSERT INTO Customers (government_id_type, government_id, first_name, last_name,
 ('driver’s license', 'D12345678', 'Jane', 'Smith', 456, 'Park Ave', '2023-02-01');
 
 INSERT INTO Employees (hotel_id, first_name, last_name, street_number, street_name, sin, role) VALUES
-(1, 'Alice', 'Brown', 789, 'Elm St', 'SIN123456', 'Manager'),
+(1, 'Alice', 'Brown', 789, 'Elm St', 'SIN123456', 'Managers'),
 (2, 'Bob', 'Johnson', 234, 'Maple St', 'SIN987654', 'Receptionist');
