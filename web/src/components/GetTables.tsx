@@ -36,10 +36,14 @@ const GetTables = () => {
   ];
 
   return (
-    <div>
-      <h1 className="text-center mt-5">GetStuff</h1>
-      <form className="d-flex mt-5" onSubmit={getTables}>
-        <select className="form-select" value={selectValue} onChange={(e) => setSelectValue(e.target.value)}>
+    <div className="max-w-lg mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-md">
+      <h1 className="text-center text-2xl font-bold mb-5">GetStuff</h1>
+      <form className="flex flex-col space-y-4" onSubmit={getTables}>
+        <select
+          className="form-select block w-full p-2 border border-gray-300 rounded-md bg-white text-black"
+          value={selectValue}
+          onChange={(e) => setSelectValue(e.target.value)}
+        >
           <option disabled value="">
             Select Table
           </option>
@@ -49,9 +53,12 @@ const GetTables = () => {
             </option>
           ))}
         </select>
-        <button className="btn btn-success">Get Table</button>
+        <button className="bg-cyan-700 text-white py-2 px-4 rounded-md hover:bg-cyan-900">
+          Get Table
+        </button>
       </form>
     </div>
   );
 };
+
 export default GetTables;
