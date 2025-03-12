@@ -1,7 +1,8 @@
-CREATE DATABASE EHotelDB;
+DROP DATABASE IF EXISTS ehoteldb;
+CREATE DATABASE ehoteldb;
 
 -- Use the database
-\c EHotelDB;
+\c ehoteldb;
 
 -- Create HotelChain table
 CREATE TABLE HotelChain (
@@ -108,45 +109,47 @@ CREATE TABLE Manager (
 CREATE TABLE Bookings (
     id SERIAL PRIMARY KEY,
     customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE CASCADE,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE CASCADE,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    status VARCHAR(20) CHECK (status IN ('Confirmed', 'Canceled', 'Checked-In'))
+    status VARCHAR(20) CHECK (status IN ('Confirmed', 'Canceled', 'Checked-In')),
+    FOREIGN KEY (hotel_id, room_num) REFERENCES Rooms(hotel_id, room_num) ON DELETE CASCADE
 );
 
 -- Create Rentings table
 CREATE TABLE Rentings (
     id SERIAL PRIMARY KEY,
     customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE CASCADE,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE CASCADE,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    employee_id INT REFERENCES Employees(id) ON DELETE SET NULL
+    employee_id INT REFERENCES Employees(id) ON DELETE SET NULL,
+    FOREIGN KEY (hotel_id, room_num) REFERENCES Rooms(hotel_id, room_num) ON DELETE CASCADE
 );
 
 -- Create RentingArchives table
 CREATE TABLE RentingArchives (
     id SERIAL PRIMARY KEY,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE SET NULL,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE SET NULL,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    checked_in_by INT UNIQUE REFERENCES Employees(id) ON DELETE SET NULL,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE SET NULL,
-    renting_id INT UNIQUE REFERENCES Rentings(id) ON DELETE SET NULL
+    checked_in_by INT,
+    customer_id INT,
+    renting_id INT
 );
 
 -- Create BookingArchives table
 CREATE TABLE BookingArchives (
     id SERIAL PRIMARY KEY,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE SET NULL,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE SET NULL,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE SET NULL,
-    booking_id INT UNIQUE REFERENCES Bookings(id) ON DELETE SET NULL
+    customer_id INT,
+    booking_id INT
 );
 
 -- Insert random data
