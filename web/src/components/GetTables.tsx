@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 
 const GetTables = () => {
-  const [selectValue, setSelectValue] = useState("hotels");
+  const [selectValue, setSelectValue] = useState("");
 
-  const getHotels = async (e) => {
+  const getTables = async (e) => {
+    console.log("in get tables", selectValue);
     e.preventDefault();
     try {
       const response = await fetch(`http://localhost:8080/${selectValue}`, {
@@ -17,18 +18,36 @@ const GetTables = () => {
     }
   };
 
+  const tables = [
+    { value: "hotelchains", display: "Hotel Chains" },
+    { value: "hotelchainphonenumbers", display: "Hotel Chain Phone Numbers" },
+    { value: "hotelchainemails", display: "Hotel Chain Emails" },
+    { value: "hotels", display: "Hotels" },
+    { value: "rooms", display: "Rooms" },
+    { value: "roomamenities", display: "Room Amenities" },
+    { value: "roomavailabledates", display: "Room Available Dates" },
+    { value: "customers", display: "Customers" },
+    { value: "employees", display: "Employees" },
+    { value: "managers", display: "Managers" },
+    { value: "bookings", display: "Bookings" },
+    { value: "rentings", display: "Rentings" },
+    { value: "rentingarchives", display: "Renting Archives" },
+    { value: "bookingarchives", display: "Booking Archives" },
+  ];
+
   return (
     <div>
       <h1 className="text-center mt-5">GetStuff</h1>
-      <form className="d-flex mt-5" onSubmit={getHotels}>
+      <form className="d-flex mt-5" onSubmit={getTables}>
         <select className="form-select" value={selectValue} onChange={(e) => setSelectValue(e.target.value)}>
-          <option value="hotels">hotels</option>
-          <option value="rooms">Rooms</option>
-          <option value="employees">Employees</option>
-          <option value="guests">Guests</option>
-          <option value="reservations">Reservations</option>
-          <option value="services">Services</option>
-          <option value="service_orders">Service Orders</option>
+          <option disabled value="">
+            Select Table
+          </option>
+          {tables.map((table) => (
+            <option key={table.value} value={table.value}>
+              {table.display}
+            </option>
+          ))}
         </select>
         <button className="btn btn-success">Get Table</button>
       </form>

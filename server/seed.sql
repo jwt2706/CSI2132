@@ -1,10 +1,11 @@
-CREATE DATABASE EHotelDB;
+DROP DATABASE IF EXISTS ehoteldb;
+CREATE DATABASE ehoteldb;
 
 -- Use the database
-\c EHotelDB;
+\c ehoteldb;
 
--- Create HotelChain table
-CREATE TABLE HotelChain (
+-- Create HotelChains table
+CREATE TABLE HotelChains (
     id SERIAL PRIMARY KEY,
     street_number INT,
     street_name VARCHAR(255),
@@ -13,20 +14,20 @@ CREATE TABLE HotelChain (
 
 -- Create HotelChainPhoneNumbers table
 CREATE TABLE HotelChainPhoneNumbers (
-    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChains(id) ON DELETE CASCADE,
     phone_number VARCHAR(20) UNIQUE
 );
 
 -- Create HotelChainEmails table
 CREATE TABLE HotelChainEmails (
-    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT PRIMARY KEY REFERENCES HotelChains(id) ON DELETE CASCADE,
     email VARCHAR(100) UNIQUE
 );
 
 -- Create Hotels table
 CREATE TABLE Hotels (
     id SERIAL PRIMARY KEY,
-    hotel_chain_id INT REFERENCES HotelChain(id) ON DELETE CASCADE,
+    hotel_chain_id INT REFERENCES HotelChains(id) ON DELETE CASCADE,
     street_number INT,
     street_name VARCHAR(255),
     num_rooms INT,
@@ -99,7 +100,7 @@ CREATE TABLE Employees (
 );
 
 -- Create Manager table
-CREATE TABLE Manager (
+CREATE TABLE Managers (
     employee_id INT PRIMARY KEY REFERENCES Employees(id) ON DELETE CASCADE,
     hotel_id INT UNIQUE REFERENCES Hotels(id) ON DELETE CASCADE
 );
@@ -108,49 +109,51 @@ CREATE TABLE Manager (
 CREATE TABLE Bookings (
     id SERIAL PRIMARY KEY,
     customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE CASCADE,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE CASCADE,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    status VARCHAR(20) CHECK (status IN ('Confirmed', 'Canceled', 'Checked-In'))
+    status VARCHAR(20) CHECK (status IN ('Confirmed', 'Canceled', 'Checked-In')),
+    FOREIGN KEY (hotel_id, room_num) REFERENCES Rooms(hotel_id, room_num) ON DELETE CASCADE
 );
 
 -- Create Rentings table
 CREATE TABLE Rentings (
     id SERIAL PRIMARY KEY,
     customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE CASCADE,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE CASCADE,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    employee_id INT REFERENCES Employees(id) ON DELETE SET NULL
+    employee_id INT REFERENCES Employees(id) ON DELETE SET NULL,
+    FOREIGN KEY (hotel_id, room_num) REFERENCES Rooms(hotel_id, room_num) ON DELETE CASCADE
 );
 
 -- Create RentingArchives table
 CREATE TABLE RentingArchives (
     id SERIAL PRIMARY KEY,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE SET NULL,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE SET NULL,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    checked_in_by INT UNIQUE REFERENCES Employees(id) ON DELETE SET NULL,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE SET NULL,
-    renting_id INT UNIQUE REFERENCES Rentings(id) ON DELETE SET NULL
+    checked_in_by INT,
+    customer_id INT,
+    renting_id INT
 );
 
 -- Create BookingArchives table
 CREATE TABLE BookingArchives (
     id SERIAL PRIMARY KEY,
-    hotel_id INT REFERENCES Hotels(id) ON DELETE SET NULL,
-    room_num INT REFERENCES Rooms(room_num) ON DELETE SET NULL,
+    hotel_id INT,
+    room_num INT,
     start_date DATE,
     end_date DATE,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE SET NULL,
-    booking_id INT UNIQUE REFERENCES Bookings(id) ON DELETE SET NULL
+    customer_id INT,
+    booking_id INT
 );
 
 -- Insert random data
-INSERT INTO HotelChain (street_number, street_name, num_hotels) VALUES
+INSERT INTO HotelChains (street_number, street_name, num_hotels) VALUES
 (101, 'Main St', 5),
 (202, 'Second Ave', 3),
 (303, 'Third Blvd', 7);
@@ -170,5 +173,5 @@ INSERT INTO Customers (government_id_type, government_id, first_name, last_name,
 ('driver’s license', 'D12345678', 'Jane', 'Smith', 456, 'Park Ave', '2023-02-01');
 
 INSERT INTO Employees (hotel_id, first_name, last_name, street_number, street_name, sin, role) VALUES
-(1, 'Alice', 'Brown', 789, 'Elm St', 'SIN123456', 'Manager'),
+(1, 'Alice', 'Brown', 789, 'Elm St', 'SIN123456', 'Managers'),
 (2, 'Bob', 'Johnson', 234, 'Maple St', 'SIN987654', 'Receptionist');
