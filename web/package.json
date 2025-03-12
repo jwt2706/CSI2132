@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "seed": "psql -U postgres -a -f ../server/seed.sql",
-    "up": "concurrently \"vite\" \"cd ../server && node index\""
+    "up": "concurrently \"vite\" \"cd ../server && node index\"",
+    "up2": "concurrently \"npx vite --host 127.0.0.1\" \"cd ../server && node index\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
