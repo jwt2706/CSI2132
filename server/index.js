@@ -25,9 +25,23 @@ app.get("/hotels/:id", async (req, res) => {
       text: "SELECT * FROM hotels WHERE id = $1",
       values: [req.params.id],
     };
-    //const { id } = req.params;
     const Hotels = await pool.query(query);
     res.json(Hotels.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.post("/customers", async (req, res) => {
+  try {
+    const query = {
+      name: "register-customer",
+      text: `INSERT INTO customers (government_id_type,government_id, first_name, last_name, street_number,street_name,registration_date) VALUES ('${req.body.government_id_type}','${req.body.government_id}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.street_number}', '${req.body.street_name}', '${req.body.registration_date}')`,
+    };
+    console.log(req.body);
+    const post_response = await pool.query(query);
+    //console.log("RESPONSE TO POST: ", post_response);
+    //res.send("Post Successful");
   } catch (err) {
     console.error(err.message);
   }
