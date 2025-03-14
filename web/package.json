@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "seed": "psql -U postgres -f ../server/seed.sql && psql -U postgres -d ehoteldb -f ../server/triggers.sql && psql -U postgres -d ehoteldb -f ../server/populate.sql",
-    "seed-v": "psql -U postgres -a -f ../server/seed.sql && psql -U postgres -d ehoteldb -a -f ../server/triggers.sql && psql -U postgres -d ehoteldb -a -f ../server/populate.sql",
+    "seed": "psql -U postgres -f ../server/seed.sql && psql -U postgres -d ehoteldb -f ../server/triggers.sql && psql -U postgres -d ehoteldb -f ../server/populate.sql && psql -U postgres -d ehoteldb -f ../server/indexes.sql",
+    "seed-v": "psql -U postgres -a -f ../server/seed.sql && psql -U postgres -d ehoteldb -a -f ../server/triggers.sql && psql -U postgres -d ehoteldb -a -f ../server/populate.sql && psql -U postgres -d ehoteldb -f ../server/indexes.sql",
     "up": "concurrently \"vite\" \"cd ../server && node index\""
   },
   "dependencies": {

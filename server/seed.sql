@@ -7,6 +7,7 @@ CREATE DATABASE ehoteldb;
 -- Create HotelChains table
 CREATE TABLE HotelChains (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
     street_number INT,
     street_name VARCHAR(255),
     num_hotels INT
@@ -32,7 +33,9 @@ CREATE TABLE Hotels (
     street_name VARCHAR(255),
     num_rooms INT,
     email VARCHAR(255),
-    stars FLOAT CHECK (stars BETWEEN 1 AND 5)
+    stars FLOAT CHECK (stars BETWEEN 1 AND 5),
+    category VARCHAR(255) CHECK (category IN ('Luxury', 'Hostel', 'Resort')),
+    name VARCHAR(255)
 );
 
 -- Create HotelPhoneNumbers table
