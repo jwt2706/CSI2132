@@ -49,7 +49,7 @@ CREATE TABLE Rooms (
     hotel_id INT REFERENCES Hotels(id) ON DELETE CASCADE,
     room_num INT,
     price DECIMAL(10,2),
-    capacity VARCHAR(10) CHECK (capacity IN ('Single', 'Double')),
+    capacity VARCHAR(10) CHECK (capacity IN ('Single', 'Double', 'Triple', 'Suite', 'Penthouse')),
     view VARCHAR(10) CHECK (view IN ('Sea', 'Mountain')),
     extendable BOOLEAN,
     issues VARCHAR(255),

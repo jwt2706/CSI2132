@@ -40,8 +40,6 @@ app.post("/customers", async (req, res) => {
     };
     console.log(req.body);
     const post_response = await pool.query(query);
-    //console.log("RESPONSE TO POST: ", post_response);
-    //res.send("Post Successful");
   } catch (err) {
     console.error(err.message);
   }
