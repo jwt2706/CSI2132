@@ -1,11 +1,11 @@
-INSERT INTO HotelChains (name, street_number, street_name, num_hotels) VALUES
+INSERT INTO HotelChains (hotel_chain_name, street_number, street_name, num_hotels) VALUES
     ('Global Luxury Hotels', 101, 'Main Street', 10),
     ('Eco Resorts Group', 202, 'Green Avenue', 9),
     ('Budget Hostel Network', 303, 'Backpacker Lane', 8),
     ('Urban Stays', 404, 'Downtown Blvd', 8),
     ('Sunset Resorts', 505, 'Coastal Road', 9);
 
-INSERT INTO Hotels (hotel_chain_id, street_number, street_name, num_rooms, email, stars, category, name) VALUES
+INSERT INTO Hotels (hotel_chain_id, street_number, street_name, num_rooms, email, stars, category, hotel_name) VALUES
     -- Global Luxury Hotels
     (1, 11, 'Main Street', 50, 'lux1@example.com', 5, 'Luxury', 'Grand Elite Hotel'),
     (1, 12, 'Main Street', 60, 'lux2@example.com', 4.5, 'Luxury', 'Royal Prestige Hotel'),
