@@ -35,7 +35,8 @@ CREATE TABLE Hotels (
     email VARCHAR(255),
     stars FLOAT CHECK (stars BETWEEN 1 AND 5),
     category VARCHAR(255) CHECK (category IN ('Luxury', 'Hostel', 'Resort')),
-    hotel_name VARCHAR(255)
+    hotel_name VARCHAR(255),
+    area VARCHAR(255) CHECK (area IN ('Downtown', 'Beach', 'Suburb'))
 );
 
 -- Create HotelPhoneNumbers table

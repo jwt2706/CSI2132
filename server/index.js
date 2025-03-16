@@ -36,7 +36,8 @@ app.post("/customers", async (req, res) => {
   try {
     const query = {
       name: "register-customer",
-      text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, // Use parameterized queries for security
+      text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
+            VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
       values: [
         req.body.government_id_type,
         req.body.government_id,
@@ -44,7 +45,6 @@ app.post("/customers", async (req, res) => {
         req.body.last_name,
         req.body.street_number,
         req.body.street_name,
-        req.body.registration_date,
       ],
     };
 
