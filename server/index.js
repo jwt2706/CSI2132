@@ -6,6 +6,7 @@ const pool = require("./db");
 app.use(cors());
 app.use(express.json());
 
+// General GET on any table
 app.get("/:table", async (req, res) => {
   try {
     const table = req.params.table;
@@ -15,6 +16,25 @@ app.get("/:table", async (req, res) => {
     res.json(allRows.rows);
   } catch (err) {
     console.error(err.message);
+  }
+});
+
+// create room booking
+app.put("/hotels/:hotel_id/rooms/:room_num/book", async (req, res) => {
+  try {
+    const { hotel_id, room_num } = req.params;
+    const { customer_id, start_date, end_date } = req.body;
+    const query = {
+      name: "book-room",
+      text: `INSERT INTO bookings (hotel_id, room_num, customer_id, start_date, end_date, status)
+              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      values: [hotel_id, room_num, customer_id, start_date, end_date, "Confirmed"],
+    };
+    const booking = await pool.query(query);
+    res.json(booking.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
