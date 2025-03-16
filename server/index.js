@@ -36,12 +36,28 @@ app.post("/customers", async (req, res) => {
   try {
     const query = {
       name: "register-customer",
-      text: `INSERT INTO customers (government_id_type,government_id, first_name, last_name, street_number,street_name,registration_date) VALUES ('${req.body.government_id_type}','${req.body.government_id}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.street_number}', '${req.body.street_name}', '${req.body.registration_date}')`,
+      text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`, // Use parameterized queries for security
+      values: [
+        req.body.government_id_type,
+        req.body.government_id,
+        req.body.first_name,
+        req.body.last_name,
+        req.body.street_number,
+        req.body.street_name,
+        req.body.registration_date,
+      ],
     };
-    console.log(req.body);
+
     const post_response = await pool.query(query);
+    console.log(post_response.rows[0]); // Log the newly created customer
+
+    res.status(201).json({
+      message: "Customer created successfully",
+      customer: post_response.rows[0], // Return the newly created customer
+    });
   } catch (err) {
     console.error(err.message);
+    res.status(500).json({ error: "Internal server error" }); // Return an error response
   }
 });
 
