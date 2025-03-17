@@ -19,10 +19,72 @@ app.get("/:table", async (req, res) => {
   }
 });
 
-// check availability of rooms
 app.get("/availability/rooms", async (req, res) => {
   try {
-    const { start_date, end_date, capacity, area, hotel_chain_name, hotel_category, num_rooms, price_min, price_max } = req.body;
+    const {
+      start_date,
+      end_date,
+      room_capacity,
+      hotel_area,
+      hotel_chain_name,
+      hotel_category,
+      hotel_room_amount,
+      room_price,
+    } = req.query;
+    const query = {
+      name: "fetch-available-rooms",
+      text: `
+            WITH date_series AS (SELECT * FROM generate_series($1,$2,'1 day'::interval))
+            SELECT r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
+            FROM rooms r
+            JOIN hotels h ON r.hotel_id = h.id
+            JOIN hotelchains hc ON hc.id = h.hotel_chain_id
+            JOIN roomavailabledates a ON r.hotel_id = a.hotel_id AND r.room_num = a.room_num
+            JOIN date_series d ON d.generate_series = a.room_available_date
+            WHERE r.capacity = $3 
+              AND h.area = $4 
+              AND hc.hotel_chain_name = $5 
+              AND h.category = $6 
+              AND r.price = $7 
+              AND $8 IN (	
+                SELECT COUNT(room_num) AS num_rooms
+                FROM rooms r
+                JOIN hotels h ON h.id = r.hotel_id
+                GROUP BY h.hotel_name)`,
+      values: [
+        start_date,
+        end_date,
+        room_capacity,
+        hotel_area,
+        hotel_chain_name,
+        hotel_category,
+        room_price,
+        hotel_room_amount,
+      ],
+    };
+
+    const rooms = await pool.query(query);
+    res.json(rooms.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/* check availability of rooms
+app.get("/availability/rooms", async (req, res) => {
+  try {
+    const {
+      start_date,
+      end_date,
+      capacity,
+      area,
+      hotel_chain_name,
+      hotel_category,
+      num_rooms,
+      price_min,
+      price_max,
+    } = req.body;
     const query = {
       name: "fetch-rooms-available",
       text: `WITH date_series AS (
@@ -37,7 +99,17 @@ app.get("/availability/rooms", async (req, res) => {
               WHERE r.capacity >= $3 AND h.area = $4 AND hc.hotel_chain_name = $5 AND h.category = $6
               GROUP BY h.hotel_name, r.room_num, r.capacity, hc.hotel_chain_name, h.category, h.area, r.price
               HAVING COUNT(DISTINCT a.room_available_date) = (SELECT COUNT(*) FROM date_series) AND COUNT(r.room_num) >= $7 AND r.price BETWEEN $8 AND $9`,
-      values: [start_date, end_date, capacity, area, hotel_chain_name, hotel_category, num_rooms, price_min, price_max],
+      values: [
+        start_date,
+        end_date,
+        capacity,
+        area,
+        hotel_chain_name,
+        hotel_category,
+        num_rooms,
+        price_min,
+        price_max,
+      ],
     };
     const rooms = await pool.query(query);
     console.log(rooms);
@@ -46,7 +118,7 @@ app.get("/availability/rooms", async (req, res) => {
     console.error(err.message);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+});*/
 
 // create room booking
 app.put("/hotels/:hotel_id/rooms/:room_num/book", async (req, res) => {
@@ -57,7 +129,14 @@ app.put("/hotels/:hotel_id/rooms/:room_num/book", async (req, res) => {
       name: "book-room",
       text: `INSERT INTO bookings (hotel_id, room_num, customer_id, start_date, end_date, status)
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      values: [hotel_id, room_num, customer_id, start_date, end_date, "Confirmed"],
+      values: [
+        hotel_id,
+        room_num,
+        customer_id,
+        start_date,
+        end_date,
+        "Confirmed",
+      ],
     };
     const booking = await pool.query(query);
     res.json(booking.rows[0]);
@@ -81,13 +160,20 @@ app.get("/hotels/:id", async (req, res) => {
   }
 });
 
-app.post("/customers", async (req, res) => {
+app.put("/customers", async (req, res) => {
   try {
     const query = {
       name: "register-customer",
       text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
             VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
-      values: [req.body.government_id_type, req.body.government_id, req.body.first_name, req.body.last_name, req.body.street_number, req.body.street_name],
+      values: [
+        req.body.government_id_type,
+        req.body.government_id,
+        req.body.first_name,
+        req.body.last_name,
+        req.body.street_number,
+        req.body.street_name,
+      ],
     };
 
     const post_response = await pool.query(query);
