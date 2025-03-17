@@ -34,23 +34,24 @@ app.get("/availability/rooms", async (req, res) => {
     const query = {
       name: "fetch-available-rooms",
       text: `
-            WITH date_series AS (SELECT * FROM generate_series($1,$2,'1 day'::interval))
+            WITH date_series AS (SELECT * FROM generate_series($1,$2,'1 day'::interval)), 
+            	 num_rooms AS (SELECT h.hotel_name, COUNT(room_num) AS num_rooms
+                             FROM rooms r
+                             JOIN hotels h ON h.id = r.hotel_id
+                             GROUP BY h.hotel_name)
             SELECT r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             FROM rooms r
             JOIN hotels h ON r.hotel_id = h.id
             JOIN hotelchains hc ON hc.id = h.hotel_chain_id
             JOIN roomavailabledates a ON r.hotel_id = a.hotel_id AND r.room_num = a.room_num
             JOIN date_series d ON d.generate_series = a.room_available_date
-            WHERE r.capacity = $3 
-              AND h.area = $4 
-              AND hc.hotel_chain_name = $5 
-              AND h.category = $6 
-              AND r.price = $7 
-              AND $8 IN (	
-                SELECT COUNT(room_num) AS num_rooms
-                FROM rooms r
-                JOIN hotels h ON h.id = r.hotel_id
-                GROUP BY h.hotel_name)`,
+            JOIN num_rooms n ON h.hotel_name = n.hotel_name
+            WHERE (r.capacity = $3 OR $3 IS NULL)
+              AND (h.area = $4 OR $4 IS NULL)
+              AND (hc.hotel_chain_name = $5 OR $5 IS NULL) 
+              AND (h.category = $6 OR $6 IS NULL)
+              AND (r.price = $7 OR $7 IS NULL)
+              AND (n.num_rooms = $8 OR $8 IS NULL)`,
       values: [
         start_date,
         end_date,
@@ -65,6 +66,7 @@ app.get("/availability/rooms", async (req, res) => {
 
     const rooms = await pool.query(query);
     res.json(rooms.rows);
+    console.log(rooms.rowCount);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Internal server error" });
