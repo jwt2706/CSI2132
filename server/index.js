@@ -21,21 +21,30 @@ app.use(express.json());
 
 app.get("/availability/rooms", async (req, res) => {
   try {
-    const { start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, hotel_room_amount, room_price } = req.query;
+    const {
+      start_date,
+      end_date,
+      room_capacity,
+      hotel_area,
+      hotel_chain_name,
+      hotel_category,
+      hotel_room_amount,
+      room_price,
+    } = req.query;
     const query = {
       name: "fetch-available-rooms",
       text: `
-            WITH date_series AS (SELECT * FROM generate_series($1,$2,'1 day'::interval)), 
-            	 num_rooms AS (SELECT h.hotel_name, COUNT(room_num) AS num_rooms
-                             FROM rooms r
-                             JOIN hotels h ON h.id = r.hotel_id
-                             GROUP BY h.hotel_name)
+            WITH date_series AS (SELECT * FROM generate_series($1,$2,'1 day'::interval) AS date_range), 
+              num_rooms AS (SELECT h.hotel_name, COUNT(room_num) AS num_rooms
+                    FROM rooms r
+                    JOIN hotels h ON h.id = r.hotel_id
+                    GROUP BY h.hotel_name)
             SELECT h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             FROM rooms r
             JOIN hotels h ON r.hotel_id = h.id
             JOIN hotelchains hc ON hc.id = h.hotel_chain_id
             JOIN roomavailabledates a ON r.hotel_id = a.hotel_id AND r.room_num = a.room_num
-            JOIN date_series d ON d.generate_series = a.room_available_date
+            JOIN date_series d ON d.date_range = a.room_available_date
             JOIN num_rooms n ON h.hotel_name = n.hotel_name
             WHERE (r.capacity = $3 OR $3 IS NULL)
               AND (h.area = $4 OR $4 IS NULL)
@@ -43,8 +52,18 @@ app.get("/availability/rooms", async (req, res) => {
               AND (h.category = $6 OR $6 IS NULL)
               AND (r.price = $7 OR $7 IS NULL)
               AND (n.num_rooms = $8 OR $8 IS NULL)
-            GROUP BY (h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price)`,
-      values: [start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, room_price, hotel_room_amount],
+            GROUP BY h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
+            HAVING COUNT(a.room_available_date) IN (SELECT COUNT(date_range) FROM date_series)`,
+      values: [
+        start_date,
+        end_date,
+        room_capacity,
+        hotel_area,
+        hotel_chain_name,
+        hotel_category,
+        room_price,
+        hotel_room_amount,
+      ],
     };
 
     const rooms = await pool.query(query);
@@ -64,7 +83,14 @@ app.put("/bookings", async (req, res) => {
       name: "new-room-booking",
       text: `INSERT INTO bookings (hotel_id, room_num, customer_id, start_date, end_date, status)
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      values: [hotel_id, room_num, customer_id, start_date, end_date, "Confirmed"],
+      values: [
+        hotel_id,
+        room_num,
+        customer_id,
+        start_date,
+        end_date,
+        "Confirmed",
+      ],
     };
     const booking = await pool.query(query);
     res.json(booking.rows[0]);
@@ -110,7 +136,14 @@ app.put("/customers", async (req, res) => {
       name: "register-customer",
       text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
             VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
-      values: [req.body.government_id_type, req.body.government_id, req.body.first_name, req.body.last_name, req.body.street_number, req.body.street_name],
+      values: [
+        req.body.government_id_type,
+        req.body.government_id,
+        req.body.first_name,
+        req.body.last_name,
+        req.body.street_number,
+        req.body.street_name,
+      ],
     };
 
     const post_response = await pool.query(query);
