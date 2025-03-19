@@ -6,19 +6,6 @@ const pool = require("./db");
 app.use(cors());
 app.use(express.json());
 
-// General GET on any table
-// app.get("/:table", async (req, res) => {
-//   try {
-//     const table = req.params.table;
-//     const query = `SELECT * FROM ${table}`;
-//     console.log("in get", table);
-//     const allRows = await pool.query(query);
-//     res.json(allRows.rows);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
-// });
-
 app.get("/availability/rooms", async (req, res) => {
   try {
     const {
@@ -100,6 +87,7 @@ app.put("/bookings", async (req, res) => {
   }
 });
 
+//delete room booking
 app.delete("/bookings/:booking_id", async (req, res) => {
   try {
     const { booking_id } = req.params;
@@ -132,30 +120,83 @@ app.get("/hotels/:id", async (req, res) => {
 
 app.put("/customers", async (req, res) => {
   try {
+    const {
+      government_id_type,
+      government_id,
+      first_name,
+      last_name,
+      street_number,
+      street_name,
+    } = req.body;
     const query = {
       name: "register-customer",
       text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
             VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
       values: [
-        req.body.government_id_type,
-        req.body.government_id,
-        req.body.first_name,
-        req.body.last_name,
-        req.body.street_number,
-        req.body.street_name,
+        government_id_type,
+        government_id,
+        first_name,
+        last_name,
+        street_number,
+        street_name,
       ],
     };
 
-    const post_response = await pool.query(query);
-    console.log(post_response.rows[0]); // Log the newly created customer
+    const put_response = await pool.query(query);
+    console.log(put_response.rows[0]);
 
     res.status(201).json({
       message: "Customer created successfully",
-      customer: post_response.rows[0], // Return the newly created customer
+      customer: put_response.rows[0],
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ error: "Internal server error" }); // Return an error response
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.patch("/customers/:customer_id", async (req, res) => {
+  try {
+    const { customer_id } = req.params;
+    const {
+      government_id_type,
+      government_id,
+      first_name,
+      last_name,
+      street_number,
+      street_name,
+    } = req.body;
+    const query = {
+      name: "update-customer",
+      text: `UPDATE customers
+              SET government_id_type = COALESCE($2,government_id_type),
+                  government_id = COALESCE($3,government_id),
+                  first_name = COALESCE($4,first_name),
+                  last_name = COALESCE($5,last_name),
+                  street_number = COALESCE($6,street_number),
+                  street_name = COALESCE($7,street_name)
+              WHERE id = $1
+              RETURNING *;
+              `,
+      values: [
+        customer_id,
+        government_id_type,
+        government_id,
+        first_name,
+        last_name,
+        street_number,
+        street_name,
+      ],
+    };
+    const patch_response = await pool.query(query);
+    console.log(patch_response.rows[0]);
+    res.status(200).json({
+      message: "Customer updated successfully",
+      customer: patch_response.rows[0],
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
