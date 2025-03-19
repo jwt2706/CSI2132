@@ -6,7 +6,7 @@ ON RoomAvailableDates (room_available_date, hotel_id, room_num);
 DROP INDEX IF EXISTS idx_hotels;
 
 CREATE INDEX idx_rooms 
-ON Hotels (id, nom_rooms, category, hotel_name);
+ON Hotels (id, num_rooms, category, hotel_name);
 
 
 DROP INDEX IF EXISTS idx_rooms;
