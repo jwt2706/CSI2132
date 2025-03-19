@@ -70,7 +70,7 @@ CREATE TABLE RoomAmenities (
     FOREIGN KEY (hotel_id, room_num) REFERENCES Rooms(hotel_id, room_num) ON DELETE CASCADE
 );
 
--- Create RoomAvailableDates table
+-- Create RoomAvailableDates table 
 CREATE TABLE RoomAvailableDates (
     hotel_id INT,
     room_num INT,

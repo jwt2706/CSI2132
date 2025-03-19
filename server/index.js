@@ -39,7 +39,7 @@ app.get("/availability/rooms", async (req, res) => {
                              FROM rooms r
                              JOIN hotels h ON h.id = r.hotel_id
                              GROUP BY h.hotel_name)
-            SELECT r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
+            SELECT h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             FROM rooms r
             JOIN hotels h ON r.hotel_id = h.id
             JOIN hotelchains hc ON hc.id = h.hotel_chain_id
@@ -51,7 +51,8 @@ app.get("/availability/rooms", async (req, res) => {
               AND (hc.hotel_chain_name = $5 OR $5 IS NULL) 
               AND (h.category = $6 OR $6 IS NULL)
               AND (r.price = $7 OR $7 IS NULL)
-              AND (n.num_rooms = $8 OR $8 IS NULL)`,
+              AND (n.num_rooms = $8 OR $8 IS NULL)
+            GROUP BY (h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price)`,
       values: [
         start_date,
         end_date,
@@ -72,55 +73,6 @@ app.get("/availability/rooms", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-/* check availability of rooms
-app.get("/availability/rooms", async (req, res) => {
-  try {
-    const {
-      start_date,
-      end_date,
-      capacity,
-      area,
-      hotel_chain_name,
-      hotel_category,
-      num_rooms,
-      price_min,
-      price_max,
-    } = req.body;
-    const query = {
-      name: "fetch-rooms-available",
-      text: `WITH date_series AS (
-                SELECT generate_series($1::date, $2::date, '1 day'::interval) AS date
-              )
-              SELECT h.hotel_name, r.room_num, r.capacity, hc.hotel_chain_name, h.category, h.area, r.price
-              FROM rooms r
-              JOIN hotels h ON r.hotel_id = h.id
-              JOIN hotelchains hc ON hc.id = h.hotel_chain_id
-              JOIN roomavailabledates a ON r.hotel_id = a.hotel_id AND r.room_num = a.room_num
-              JOIN date_series ds ON ds.date = a.room_available_date
-              WHERE r.capacity >= $3 AND h.area = $4 AND hc.hotel_chain_name = $5 AND h.category = $6
-              GROUP BY h.hotel_name, r.room_num, r.capacity, hc.hotel_chain_name, h.category, h.area, r.price
-              HAVING COUNT(DISTINCT a.room_available_date) = (SELECT COUNT(*) FROM date_series) AND COUNT(r.room_num) >= $7 AND r.price BETWEEN $8 AND $9`,
-      values: [
-        start_date,
-        end_date,
-        capacity,
-        area,
-        hotel_chain_name,
-        hotel_category,
-        num_rooms,
-        price_min,
-        price_max,
-      ],
-    };
-    const rooms = await pool.query(query);
-    console.log(rooms);
-    res.json(rooms.rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});*/
 
 // create room booking
 app.put("/hotels/:hotel_id/rooms/:room_num/book", async (req, res) => {

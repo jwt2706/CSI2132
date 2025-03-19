@@ -29,7 +29,7 @@ DROP TRIGGER IF EXISTS booking_deleted ON bookings;
 
 
 CREATE OR REPLACE FUNCTION restore_room_availability() RETURNS TRIGGER AS $$
-DECLARE
+DECLARE 
     date_iter DATE;
 BEGIN
     date_iter := OLD.start_date;
