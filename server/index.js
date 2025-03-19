@@ -7,30 +7,21 @@ app.use(cors());
 app.use(express.json());
 
 // General GET on any table
-app.get("/:table", async (req, res) => {
-  try {
-    const table = req.params.table;
-    const query = `SELECT * FROM ${table}`;
-    console.log("in get", table);
-    const allRows = await pool.query(query);
-    res.json(allRows.rows);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
+// app.get("/:table", async (req, res) => {
+//   try {
+//     const table = req.params.table;
+//     const query = `SELECT * FROM ${table}`;
+//     console.log("in get", table);
+//     const allRows = await pool.query(query);
+//     res.json(allRows.rows);
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// });
 
 app.get("/availability/rooms", async (req, res) => {
   try {
-    const {
-      start_date,
-      end_date,
-      room_capacity,
-      hotel_area,
-      hotel_chain_name,
-      hotel_category,
-      hotel_room_amount,
-      room_price,
-    } = req.query;
+    const { start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, hotel_room_amount, room_price } = req.query;
     const query = {
       name: "fetch-available-rooms",
       text: `
@@ -53,16 +44,7 @@ app.get("/availability/rooms", async (req, res) => {
               AND (r.price = $7 OR $7 IS NULL)
               AND (n.num_rooms = $8 OR $8 IS NULL)
             GROUP BY (h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price)`,
-      values: [
-        start_date,
-        end_date,
-        room_capacity,
-        hotel_area,
-        hotel_chain_name,
-        hotel_category,
-        room_price,
-        hotel_room_amount,
-      ],
+      values: [start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, room_price, hotel_room_amount],
     };
 
     const rooms = await pool.query(query);
@@ -75,22 +57,30 @@ app.get("/availability/rooms", async (req, res) => {
 });
 
 // create room booking
-app.put("/hotels/:hotel_id/rooms/:room_num/book", async (req, res) => {
+app.put("/bookings", async (req, res) => {
   try {
-    const { hotel_id, room_num } = req.params;
-    const { customer_id, start_date, end_date } = req.body;
+    const { hotel_id, room_num, customer_id, start_date, end_date } = req.body;
     const query = {
-      name: "book-room",
+      name: "new-room-booking",
       text: `INSERT INTO bookings (hotel_id, room_num, customer_id, start_date, end_date, status)
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      values: [
-        hotel_id,
-        room_num,
-        customer_id,
-        start_date,
-        end_date,
-        "Confirmed",
-      ],
+      values: [hotel_id, room_num, customer_id, start_date, end_date, "Confirmed"],
+    };
+    const booking = await pool.query(query);
+    res.json(booking.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.delete("/bookings/:booking_id", async (req, res) => {
+  try {
+    const { booking_id } = req.params;
+    const query = {
+      name: "delete-room-booking",
+      text: `DELETE FROM Bookings WHERE id = $1`,
+      values: [booking_id],
     };
     const booking = await pool.query(query);
     res.json(booking.rows[0]);
@@ -120,14 +110,7 @@ app.put("/customers", async (req, res) => {
       name: "register-customer",
       text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
             VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
-      values: [
-        req.body.government_id_type,
-        req.body.government_id,
-        req.body.first_name,
-        req.body.last_name,
-        req.body.street_number,
-        req.body.street_name,
-      ],
+      values: [req.body.government_id_type, req.body.government_id, req.body.first_name, req.body.last_name, req.body.street_number, req.body.street_name],
     };
 
     const post_response = await pool.query(query);
