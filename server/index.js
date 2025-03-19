@@ -202,6 +202,23 @@ app.patch("/customers/:customer_id", async (req, res) => {
   }
 });
 
+//delete customer
+app.delete("/customers/:customer_id", async (req, res) => {
+  try {
+    const { customer_id } = req.params;
+    const query = {
+      name: "delete-customer",
+      text: `DELETE FROM customers WHERE id = $1`,
+      values: [customer_id],
+    };
+    const delete_response = await pool.query(query);
+    res.json(delete_response.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // app.post("/hotels", async (req, res) => {
 //   try {
 //     const { hotel_chain_id, street_number, street_name, num_rooms, email, stars } = req.body;
