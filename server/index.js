@@ -118,6 +118,7 @@ app.get("/hotels/:id", async (req, res) => {
   }
 });
 
+//create customer
 app.put("/customers", async (req, res) => {
   try {
     const {
@@ -155,6 +156,7 @@ app.put("/customers", async (req, res) => {
   }
 });
 
+//update customer information
 app.patch("/customers/:customer_id", async (req, res) => {
   try {
     const { customer_id } = req.params;
