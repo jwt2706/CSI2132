@@ -8,9 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "seed": "psql -U postgres -a -f ../server/seed.sql",
-    "up": "concurrently \"vite\" \"cd ../server && node index\"",
-    "up2": "concurrently \"npx vite --host 127.0.0.1\" \"cd ../server && node index\""
+    "seed": "psql -U postgres -f ../server/seed.sql && psql -U postgres -d ehoteldb -f ../server/triggers.sql && psql -U postgres -d ehoteldb -f ../server/indexes.sql && psql -U postgres -d ehoteldb -f ../server/views.sql && psql -U postgres -d ehoteldb -f ../server/populate.sql",
+    "seed-v": "psql -U postgres -a -f ../server/seed.sql && psql -U postgres -d ehoteldb -a -f ../server/triggers.sql && psql -U postgres -d ehoteldb -a -f ../server/indexes.sql && psql -U postgres -d ehoteldb -a -f ../server/views.sql && psql -U postgres -d ehoteldb -a -f ../server/populate.sql",
+    "up": "npm run seed && concurrently \"vite\" \"cd ../server && node index\"",
+    "up-ns": "concurrently \"vite\" \"cd ../server && node index\"",
+    "server": "node ../server/index"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
