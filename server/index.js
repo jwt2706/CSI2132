@@ -18,6 +18,7 @@ app.get("/availability/rooms", async (req, res) => {
       hotel_room_amount,
       room_price,
     } = req.query;
+    console.log(req.query);
     const query = {
       name: "fetch-available-rooms",
       text: `
@@ -55,7 +56,6 @@ app.get("/availability/rooms", async (req, res) => {
 
     const rooms = await pool.query(query);
     res.json(rooms.rows);
-    console.log(rooms.rowCount);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Internal server error" });
