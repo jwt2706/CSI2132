@@ -112,7 +112,7 @@ CREATE TABLE Managers (
 -- Create Bookings table
 CREATE TABLE Bookings (
     id SERIAL PRIMARY KEY,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
+    customer_id INT REFERENCES Customers(id) ON DELETE CASCADE,
     hotel_id INT,
     room_num INT,
     start_date DATE,
@@ -124,7 +124,7 @@ CREATE TABLE Bookings (
 -- Create Rentings table
 CREATE TABLE Rentings (
     id SERIAL PRIMARY KEY,
-    customer_id INT UNIQUE REFERENCES Customers(id) ON DELETE CASCADE,
+    customer_id INT REFERENCES Customers(id) ON DELETE CASCADE,
     hotel_id INT,
     room_num INT,
     start_date DATE,
