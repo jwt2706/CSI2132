@@ -133,7 +133,6 @@ END;
 $$;
 
 -- Insert into RoomAmenities
-
 DO $$
 DECLARE 
     h_id INT;  
@@ -155,3 +154,9 @@ BEGIN
     END LOOP;
 END;
 $$;
+
+-- Insert Customers
+INSERT INTO Customers (government_id_type, government_id, first_name, last_name, street_number, street_name) VALUES
+('ssn', '300152646', 'Xavier', 'Lermusieaux', 123, 'Street'),
+('sin', '123-456-789','Sacha', 'Arseneault', 321, 'Avenue'),
+('HC', '987654321', 'Jacob', 'Dusty', 456, 'Boulevard');
