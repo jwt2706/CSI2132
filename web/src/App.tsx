@@ -2,6 +2,9 @@ import { useState } from "react";
 import Header from "./components/Header";
 import GetTables from "./components/GetTables";
 import GetAvailableRooms from "./components/GetAvailableRooms";
+import TurnBookingToRenting from "./components/TurnBookingToRenting";
+import DirectRenting from "./components/DirectRenting";
+import InsertPayment from "./components/InsertPayment";
 
 function App() {
   const [view, setView] = useState("customer"); // customer view is the default
@@ -18,6 +21,12 @@ function App() {
         {view === "employee" && (
           <>
             <GetTables />
+            <br />
+            <TurnBookingToRenting />
+            <br />
+            <DirectRenting />
+            <br />
+            <InsertPayment />
           </>
         )}
       </main>
