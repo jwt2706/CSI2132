@@ -36,11 +36,11 @@ const GetTables = () => {
   ];
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-md">
+    <div className="max-w-lg mx-auto p-6 bg-gray-900 text-white rounded-lg shadow-lg border border-gray-700">
       <h1 className="text-center text-2xl font-bold mb-5">GetStuff</h1>
       <form className="flex flex-col space-y-4" onSubmit={getTables}>
         <select
-          className="form-select block w-full p-2 border border-gray-300 rounded-md bg-white text-black"
+          className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
           value={selectValue}
           onChange={(e) => setSelectValue(e.target.value)}
         >
@@ -53,7 +53,7 @@ const GetTables = () => {
             </option>
           ))}
         </select>
-        <button className="bg-cyan-700 text-white py-2 px-4 rounded-md hover:bg-cyan-900">
+        <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
           Get Table
         </button>
       </form>

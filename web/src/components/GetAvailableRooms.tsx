@@ -49,18 +49,20 @@ const GetAvailableRooms = () => {
     }
   };
 
-  return (
+    return (
     <>
-      <div className="max-w-lg mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-md">
-        <h1 className="text-center text-2xl font-bold mb-5">
-          GetAvailableRooms
+      <div className="max-w-2xl mx-auto p-8 bg-gray-900 text-white rounded-lg shadow-lg border border-gray-700">
+        <h1 className="text-center text-3xl font-extrabold mb-6">
+          Search Available Rooms
         </h1>
-        <form className="flex flex-col space-y-4" onSubmit={getAvailableRooms}>
-          <div className="flex flex-row">
-            <div className="flex flex-col items-center">
-              <label id="start_date">Start Date</label>
+        <form className="space-y-6" onSubmit={getAvailableRooms}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col">
+              <label htmlFor="start_date" className="mb-2 font-medium">
+                Start Date
+              </label>
               <input
-                className="block"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                 type="date"
                 id="start_date"
                 name="Start Date"
@@ -75,10 +77,12 @@ const GetAvailableRooms = () => {
                 }
               />
             </div>
-            <div className="flex flex-col items-center">
-              <label id="end_date">End Date</label>
+            <div className="flex flex-col">
+              <label htmlFor="end_date" className="mb-2 font-medium">
+                End Date
+              </label>
               <input
-                className="block"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                 type="date"
                 id="end_date"
                 name="End Date"
@@ -93,10 +97,14 @@ const GetAvailableRooms = () => {
                 }
               />
             </div>
-            <div className="flex flex-col items-center">
-              <label id="room_capacity">Room Capacity</label>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col">
+              <label htmlFor="room_capacity" className="mb-2 font-medium">
+                Room Capacity
+              </label>
               <select
-                className="form-select block w-full p-2 border border-gray-300 rounded-md bg-white text-black"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                 value={searchParams.room_capacity}
                 onChange={(e) =>
                   setSearchParams((prevState) => ({
@@ -115,12 +123,12 @@ const GetAvailableRooms = () => {
                 ))}
               </select>
             </div>
-          </div>
-          <div className="flex flex-row">
-            <div className="flex flex-col items-center">
-              <label id="hotel_area">Hotel Area</label>
+            <div className="flex flex-col">
+              <label htmlFor="hotel_area" className="mb-2 font-medium">
+                Hotel Area
+              </label>
               <select
-                className="form-select block w-full p-2 border border-gray-300 rounded-md bg-white text-black"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
                 value={searchParams.hotel_area}
                 onChange={(e) =>
                   setSearchParams((prevState) => ({
@@ -140,7 +148,7 @@ const GetAvailableRooms = () => {
               </select>
             </div>
           </div>
-          <button className="bg-cyan-700 text-white py-2 px-4 rounded-md hover:bg-cyan-900">
+          <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
             Get Available Rooms
           </button>
         </form>

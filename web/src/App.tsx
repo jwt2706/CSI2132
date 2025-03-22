@@ -8,6 +8,7 @@ function App() {
       <Header />
       <main className="p-4">
         <GetAvailableRooms />
+        <br />
         <GetTables />
       </main>
     </div>
