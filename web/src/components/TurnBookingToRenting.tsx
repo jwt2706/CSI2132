@@ -1,3 +1,5 @@
+// convert a booking into renting when a customer checks in
+
 import { useState } from "react";
 
 const TurnBookingToRenting = () => {

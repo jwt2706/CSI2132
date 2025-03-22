@@ -1,3 +1,5 @@
+// record customer payments for renting
+
 import { useState } from "react";
 
 const InsertPayment = () => {

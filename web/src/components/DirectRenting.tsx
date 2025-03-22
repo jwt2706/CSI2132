@@ -1,3 +1,5 @@
+// for when a customer is physically present
+
 import { useState } from "react";
 
 const DirectRenting = () => {
