@@ -1,0 +1,229 @@
+import React, { useState } from "react";
+
+const CustomerRoomBooking = () => {
+  const [searchParams, setSearchParams] = useState({
+    start_date: "",
+    end_date: "",
+    room_capacity: "",
+    hotel_area: "",
+    hotel_chain_name: "",
+    hotel_category: "",
+    hotel_room_amount: "1",
+    room_price: "",
+  });
+
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const capacities = ["Single", "Double", "Triple", "Suite", "Penthouse"];
+  const categories = ["Luxury", "Hostel", "Resort"];
+  const areas = ["Downtown", "Beach", "Suburb"];
+
+  function getDate() {
+    const today = new Date();
+    const month =
+      (today.getMonth() + 1 < 10 ? "0" : "") + (today.getMonth() + 1);
+    const year = today.getFullYear();
+    const date = today.getDate();
+    return `${year}-${month}-${date}`;
+  }
+
+  const searchAvailableRooms = async (e) => {
+    e.preventDefault();
+    try {
+      const filteredParams = Object.fromEntries(
+        Object.entries(searchParams).filter(([_, v]) => v !== "")
+      );
+
+      filteredParams.start_date = `'${filteredParams.start_date}'`;
+      filteredParams.end_date = `'${filteredParams.end_date}'`;
+
+      const url =
+        "http://localhost:8080/availability/rooms?" +
+        new URLSearchParams(filteredParams).toString();
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => res.json());
+
+      setAvailableRooms(response);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const bookRoom = async (roomId) => {
+    try {
+      const bookingDetails = {
+        room_id: roomId,
+        start_date: searchParams.start_date,
+        end_date: searchParams.end_date,
+      };
+
+      const response = await fetch("http://localhost:8080/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingDetails),
+      });
+
+      if (response.ok) {
+        alert("Room successfully booked!");
+        setSelectedRoom(null);
+      } else {
+        alert("Failed to book room.");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto p-8 bg-gray-900 text-white rounded-lg shadow-lg border border-gray-700">
+      <h1 className="text-center text-3xl font-extrabold mb-6">
+        Search and Book Rooms
+      </h1>
+      <form className="space-y-6" onSubmit={searchAvailableRooms}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col">
+            <label htmlFor="start_date" className="mb-2 font-medium">
+              Start Date
+            </label>
+            <input
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              type="date"
+              id="start_date"
+              required
+              value={searchParams.start_date}
+              min={getDate()}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  start_date: e.target.value,
+                }))
+              }
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="end_date" className="mb-2 font-medium">
+              End Date
+            </label>
+            <input
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              type="date"
+              id="end_date"
+              required
+              value={searchParams.end_date}
+              min={searchParams.start_date}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  end_date: e.target.value,
+                }))
+              }
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col">
+            <label htmlFor="room_capacity" className="mb-2 font-medium">
+              Room Capacity
+            </label>
+            <select
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={searchParams.room_capacity}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  room_capacity: e.target.value,
+                }))
+              }
+            >
+              <option disabled value="">
+                Select Room Capacity
+              </option>
+              {capacities.map((capacity) => (
+                <option key={capacity} value={capacity}>
+                  {capacity}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="hotel_area" className="mb-2 font-medium">
+              Hotel Area
+            </label>
+            <select
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={searchParams.hotel_area}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  hotel_area: e.target.value,
+                }))
+              }
+            >
+              <option disabled value="">
+                Select Hotel Area
+              </option>
+              {areas.map((area) => (
+                <option key={area} value={area}>
+                  {area}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="hotel_room_amount" className="mb-2 font-medium">
+              Number of Rooms
+            </label>
+            <input
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              type="number"
+              id="hotel_room_amount"
+              value={searchParams.hotel_room_amount}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  hotel_room_amount: e.target.value,
+                }))
+              }
+              min="1"
+            />
+          </div>
+        </div>
+        <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+          Search Rooms
+        </button>
+      </form>
+
+      {availableRooms.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Available Rooms</h2>
+          <ul className="space-y-4">
+            {availableRooms.map((room) => (
+              <li
+                key={room.id}
+                className="p-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center"
+              >
+                <div>
+                  <p>Room ID: {room.id}</p>
+                  <p>Capacity: {room.capacity}</p>
+                  <p>Price: ${room.price}</p>
+                </div>
+                <button
+                  onClick={() => bookRoom(room.id)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                >
+                  Book Room
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CustomerRoomBooking;

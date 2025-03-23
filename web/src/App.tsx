@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import GetTables from "./components/GetTables";
-import GetAvailableRooms from "./components/GetAvailableRooms";
+import GetAvailableRooms from "./components/CustomerRoomBooking";
 import TurnBookingToRenting from "./components/TurnBookingToRenting";
 import DirectRenting from "./components/DirectRenting";
 import InsertPayment from "./components/InsertPayment";
