@@ -8,16 +8,7 @@ app.use(express.json());
 
 app.get("/availability/rooms", async (req, res) => {
   try {
-    const {
-      start_date,
-      end_date,
-      room_capacity,
-      hotel_area,
-      hotel_chain_name,
-      hotel_category,
-      hotel_room_amount,
-      room_price,
-    } = req.query;
+    const { start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, hotel_room_amount, room_price } = req.query;
     const query = {
       name: "fetch-available-rooms",
       text: `
@@ -106,7 +97,6 @@ app.get("/hotels/:id", async (req, res) => {
 //create customer
 app.put("/customers", async (req, res) => {
   try {
-    console.log(req.body);
     const { government_id_type, government_id, first_name, last_name, street_number, street_name } = req.body;
     const query = {
       name: "register-customer",
@@ -116,7 +106,6 @@ app.put("/customers", async (req, res) => {
     };
 
     const put_response = await pool.query(query);
-    console.log(put_response.rows[0]);
 
     res.status(201).json({
       message: "Customer created successfully",
@@ -176,7 +165,6 @@ app.patch("/customers/:customer_id", async (req, res) => {
       values: [customer_id, government_id_type, government_id, first_name, last_name, street_number, street_name],
     };
     const patch_response = await pool.query(query);
-    console.log(patch_response.rows[0]);
     res.status(200).json({
       message: "Customer updated successfully",
       customer: patch_response.rows[0],
@@ -228,6 +216,102 @@ app.get("/views/total_hotel_capacity", async (req, res) => {
     };
     const total_hotel_capacity = await pool.query(query);
     res.json(total_hotel_capacity.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// get all rentings
+app.get("/rentings", async (req, res) => {
+  try {
+    const rentings = await pool.query("SELECT * FROM rentings");
+    res.json(rentings.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// get all bookings
+app.get("/bookings", async (req, res) => {
+  try {
+    const bookings = await pool.query("SELECT * FROM bookings");
+    res.json(bookings.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// update booking status
+app.patch("/bookings/:booking_id", async (req, res) => {
+  try {
+    const { booking_id } = req.params;
+    const query = {
+      name: "update-booking-status",
+      text: `UPDATE bookings
+              SET status = $2
+              WHERE id = $1
+              RETURNING *`,
+      values: [booking_id, "Checked-In"],
+    };
+    const booking = await pool.query(query);
+    res.json(booking.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// convert booking to renting
+app.post("/bookings/convert/:booking_id", async (req, res) => {
+  try {
+    const booking_id = req.params;
+    const { customer_id, hotel_id, room_num, start_date, end_date, employee_id } = req.body;
+    const query = {
+      name: "convert-booking-to-renting",
+      text: `INSERT INTO rentings (customer_id, hotel_id, room_num, start_date, end_date, employee_id)
+              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      values: [customer_id, hotel_id, room_num, start_date, end_date, employee_id],
+    };
+
+    const renting = await pool.query(query);
+    res.json(renting.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// delete renting
+app.delete("/rentings/:renting_id", async (req, res) => {
+  try {
+    const { renting_id } = req.params;
+    const query = {
+      name: "delete-renting",
+      text: `DELETE FROM rentings WHERE id = $1`,
+      values: [renting_id],
+    };
+    const renting = await pool.query(query);
+    res.json(renting.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// delete booking
+app.delete("/bookings/:booking_id", async (req, res) => {
+  try {
+    const { booking_id } = req.params;
+    const query = {
+      name: "delete-booking",
+      text: `DELETE FROM bookings WHERE id = $1`,
+      values: [booking_id],
+    };
+    const booking = await pool.query(query);
+    res.json(booking.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Internal Server Error" });

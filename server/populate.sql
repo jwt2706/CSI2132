@@ -155,8 +155,21 @@ BEGIN
 END;
 $$;
 
+-- Insert into Employees
+INSERT INTO Employees (hotel_id, first_name, last_name, street_number, street_name, sin, role) VALUES
+(1, 'John', 'Doe', 123, 'Main St', '123-456-789', 'Receptionist'),
+(2, 'Jane', 'Smith', 456, 'Park Ave', '987-654-321', 'Manager');
+
 -- Insert Customers
 INSERT INTO Customers (government_id_type, government_id, first_name, last_name, street_number, street_name) VALUES
 ('ssn', '300152646', 'Xavier', 'Lermusieaux', 123, 'Street'),
 ('sin', '123-456-789','Sacha', 'Arseneault', 321, 'Avenue'),
 ('HC', '987654321', 'Jacob', 'Dusty', 456, 'Boulevard');
+
+-- Insert into Booking
+INSERT INTO Bookings (customer_id, hotel_id, room_num, start_date, end_date, status) VALUES
+(1, 1, 101, '2023-11-01', '2023-11-05', 'Confirmed'),
+(2, 2, 102, '2023-11-10', '2023-11-15', 'Confirmed'),
+(3, 3, 103, '2023-12-01', '2023-12-10', 'Canceled'),
+(1, 4, 104, '2023-12-15', '2023-12-20', 'Confirmed'),
+(2, 5, 105, '2024-01-01', '2024-01-07', 'Checked-In');
