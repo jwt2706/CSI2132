@@ -41,16 +41,7 @@ app.get("/availability/rooms", async (req, res) => {
               AND (n.num_rooms = $8 OR $8 IS NULL)
             GROUP BY h.id, h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             HAVING COUNT(a.room_available_date) IN (SELECT COUNT(date_range) FROM date_series)`,
-      values: [
-        start_date,
-        end_date,
-        room_capacity,
-        hotel_area,
-        hotel_chain_name,
-        hotel_category,
-        room_price,
-        hotel_room_amount,
-      ],
+      values: [start_date, end_date, room_capacity, hotel_area, hotel_chain_name, hotel_category, room_price, hotel_room_amount],
     };
 
     const rooms = await pool.query(query);
@@ -69,14 +60,7 @@ app.put("/bookings", async (req, res) => {
       name: "new-room-booking",
       text: `INSERT INTO bookings (hotel_id, room_num, customer_id, start_date, end_date, status)
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      values: [
-        hotel_id,
-        room_num,
-        customer_id,
-        start_date,
-        end_date,
-        "Confirmed",
-      ],
+      values: [hotel_id, room_num, customer_id, start_date, end_date, "Confirmed"],
     };
     const booking = await pool.query(query);
     console.log(booking);
@@ -122,26 +106,13 @@ app.get("/hotels/:id", async (req, res) => {
 //create customer
 app.put("/customers", async (req, res) => {
   try {
-    const {
-      government_id_type,
-      government_id,
-      first_name,
-      last_name,
-      street_number,
-      street_name,
-    } = req.body;
+    console.log(req.body);
+    const { government_id_type, government_id, first_name, last_name, street_number, street_name } = req.body;
     const query = {
       name: "register-customer",
       text: `INSERT INTO customers (government_id_type, government_id, first_name, last_name, street_number, street_name, registration_date) 
             VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP) RETURNING *`,
-      values: [
-        government_id_type,
-        government_id,
-        first_name,
-        last_name,
-        street_number,
-        street_name,
-      ],
+      values: [government_id_type, government_id, first_name, last_name, street_number, street_name],
     };
 
     const put_response = await pool.query(query);
@@ -157,18 +128,39 @@ app.put("/customers", async (req, res) => {
   }
 });
 
+//get all customers
+app.get("/customers", async (req, res) => {
+  try {
+    const customers = await pool.query("SELECT * FROM customers");
+    res.json(customers.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//get customer by id
+app.get("/customers/:customer_id", async (req, res) => {
+  try {
+    const { customer_id } = req.params;
+    const query = {
+      name: "fetch-customer",
+      text: `SELECT * FROM customers WHERE id = $1`,
+      values: [customer_id],
+    };
+    const customer = await pool.query(query);
+    res.json(customer.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 //update customer information
 app.patch("/customers/:customer_id", async (req, res) => {
   try {
     const { customer_id } = req.params;
-    const {
-      government_id_type,
-      government_id,
-      first_name,
-      last_name,
-      street_number,
-      street_name,
-    } = req.body;
+    const { government_id_type, government_id, first_name, last_name, street_number, street_name } = req.body;
     const query = {
       name: "update-customer",
       text: `UPDATE customers
@@ -181,15 +173,7 @@ app.patch("/customers/:customer_id", async (req, res) => {
               WHERE id = $1
               RETURNING *;
               `,
-      values: [
-        customer_id,
-        government_id_type,
-        government_id,
-        first_name,
-        last_name,
-        street_number,
-        street_name,
-      ],
+      values: [customer_id, government_id_type, government_id, first_name, last_name, street_number, street_name],
     };
     const patch_response = await pool.query(query);
     console.log(patch_response.rows[0]);
