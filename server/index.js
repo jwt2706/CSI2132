@@ -81,7 +81,6 @@ app.put("/bookings", async (req, res) => {
       ],
     };
     const booking = await pool.query(query);
-    console.log(booking);
 
     res.json(booking.rows[0]);
   } catch (err) {

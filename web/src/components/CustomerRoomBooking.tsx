@@ -8,13 +8,20 @@ const CustomerRoomBooking = () => {
     hotel_area: "",
     hotel_chain_name: "",
     hotel_category: "",
-    hotel_room_amount: "1",
+    hotel_room_amount: "5",
     min_room_price: "80",
     max_room_price: "400",
   });
 
-  const [availableRooms, setAvailableRooms] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  interface Room {
+    id: number;
+    room_num: number;
+    hotel_name: string;
+    capacity: string;
+    price: number;
+  }
+
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
   const capacities = ["Single", "Double", "Triple", "Suite", "Penthouse"];
   const categories = ["Luxury", "Hostel", "Resort"];
@@ -36,7 +43,7 @@ const CustomerRoomBooking = () => {
     return `${year}-${month}-${date}`;
   }
 
-  const searchAvailableRooms = async (e) => {
+  const searchAvailableRooms = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (searchParams.min_room_price === "") {
@@ -46,7 +53,7 @@ const CustomerRoomBooking = () => {
         searchParams.max_room_price = "400";
       }
       const filteredParams = Object.fromEntries(
-        Object.entries(searchParams).filter(([_, v]) => v !== "")
+        Object.entries(searchParams).filter(([, v]) => v !== "")
       );
 
       filteredParams.start_date = `'${filteredParams.start_date}'`;
@@ -64,11 +71,15 @@ const CustomerRoomBooking = () => {
       console.log(response);
       setAvailableRooms(response);
     } catch (err) {
-      console.error(err.message);
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(err);
+      }
     }
   };
 
-  const bookRoom = async (hotel_id, room_num) => {
+  const bookRoom = async (hotel_id: number, room_num: number) => {
     try {
       const bookingDetails = {
         hotel_id: hotel_id,
@@ -88,12 +99,15 @@ const CustomerRoomBooking = () => {
 
       if (response.ok) {
         alert("Room successfully booked!");
-        setSelectedRoom(null);
       } else {
         alert("Failed to book room.");
       }
     } catch (err) {
-      console.error(err.message);
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(err);
+      }
     }
   };
 
@@ -309,7 +323,7 @@ const CustomerRoomBooking = () => {
           <ul className="space-y-4">
             {availableRooms.map((room) => (
               <li
-                key={[room.id, room.room_num]}
+                key={`${room.id}-${room.room_num}`}
                 className="p-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center"
               >
                 <div>
