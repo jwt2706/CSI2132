@@ -220,6 +220,36 @@ app.delete("/customers/:customer_id", async (req, res) => {
   }
 });
 
+// fetch available_rooms view
+app.get("/views/available_rooms", async (req, res) => {
+  try {
+    const query = {
+      name: "fetch-available-rooms-view",
+      text: "SELECT * FROM available_rooms",
+    };
+    const available_rooms = await pool.query(query);
+    res.json(available_rooms.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// fetch total_hotel_capacity view
+app.get("/views/total_hotel_capacity", async (req, res) => {
+  try {
+    const query = {
+      name: "fetch-total-hotel-capacity-view",
+      text: "SELECT * FROM total_hotel_capacity",
+    };
+    const total_hotel_capacity = await pool.query(query);
+    res.json(total_hotel_capacity.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // app.post("/hotels", async (req, res) => {
 //   try {
 //     const { hotel_chain_id, street_number, street_name, num_rooms, email, stars } = req.body;
