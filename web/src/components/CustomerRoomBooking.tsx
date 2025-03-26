@@ -18,6 +18,18 @@ const CustomerRoomBooking = () => {
   const capacities = ["Single", "Double", "Triple", "Suite", "Penthouse"];
   const categories = ["Luxury", "Hostel", "Resort"];
   const areas = ["Downtown", "Beach", "Suburb"];
+  const hotelChainNames = [
+    "Luxury Stays",
+    "Mountain Resorts",
+    "Sunny Hostels",
+    "City Comfort",
+    "Global Inns",
+    "Luxury Stays",
+    "Mountain Resorts",
+    "Sunny Hostels",
+    "City Comfort",
+    "Global Inns",
+  ];
 
   function getDate() {
     const today = new Date();
@@ -191,6 +203,74 @@ const CustomerRoomBooking = () => {
                 setSearchParams((prevState) => ({
                   ...prevState,
                   hotel_room_amount: e.target.value,
+                }))
+              }
+              min="1"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col">
+            <label htmlFor="hotel_chain_name" className="mb-2 font-medium">
+              Hotel Chain Name
+            </label>
+            <select
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={searchParams.hotel_chain_name}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  hotel_chain_name: e.target.value,
+                }))
+              }
+            >
+              <option disabled value="">
+                Select Hotel Chain
+              </option>
+              {hotelChainNames.map((hotelChainName) => (
+                <option key={hotelChainName} value={hotelChainName}>
+                  {hotelChainName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="hotel_category" className="mb-2 font-medium">
+              Hotel Category
+            </label>
+            <select
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={searchParams.hotel_category}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  hotel_category: e.target.value,
+                }))
+              }
+            >
+              <option disabled value="">
+                Select Hotel Category
+              </option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="room_price" className="mb-2 font-medium">
+              Room Price
+            </label>
+            <input
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              type="number"
+              id="room_price"
+              value={searchParams.room_price}
+              onChange={(e) =>
+                setSearchParams((prevState) => ({
+                  ...prevState,
+                  room_price: e.target.value,
                 }))
               }
               min="1"
