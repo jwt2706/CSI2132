@@ -9,7 +9,8 @@ const CustomerRoomBooking = () => {
     hotel_chain_name: "",
     hotel_category: "",
     hotel_room_amount: "1",
-    room_price: "",
+    min_room_price: "80",
+    max_room_price: "400",
   });
 
   const [availableRooms, setAvailableRooms] = useState([]);
@@ -19,11 +20,6 @@ const CustomerRoomBooking = () => {
   const categories = ["Luxury", "Hostel", "Resort"];
   const areas = ["Downtown", "Beach", "Suburb"];
   const hotelChainNames = [
-    "Luxury Stays",
-    "Mountain Resorts",
-    "Sunny Hostels",
-    "City Comfort",
-    "Global Inns",
     "Luxury Stays",
     "Mountain Resorts",
     "Sunny Hostels",
@@ -43,6 +39,12 @@ const CustomerRoomBooking = () => {
   const searchAvailableRooms = async (e) => {
     e.preventDefault();
     try {
+      if (searchParams.min_room_price === "") {
+        searchParams.min_room_price = "80";
+      }
+      if (searchParams.max_room_price === "") {
+        searchParams.max_room_price = "400";
+      }
       const filteredParams = Object.fromEntries(
         Object.entries(searchParams).filter(([_, v]) => v !== "")
       );
@@ -258,23 +260,42 @@ const CustomerRoomBooking = () => {
               ))}
             </select>
           </div>
-          <div className="flex flex-col">
-            <label htmlFor="room_price" className="mb-2 font-medium">
-              Room Price
-            </label>
-            <input
-              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-              type="number"
-              id="room_price"
-              value={searchParams.room_price}
-              onChange={(e) =>
-                setSearchParams((prevState) => ({
-                  ...prevState,
-                  room_price: e.target.value,
-                }))
-              }
-              min="1"
-            />
+          <div className="flex flex-row space-x-4">
+            <div className="flex flex-col grow">
+              <label htmlFor="min_room_price" className="mb-2 font-medium">
+                Min
+              </label>
+              <input
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                type="number"
+                id="room_price"
+                min={"80"}
+                value={searchParams.min_room_price}
+                onChange={(e) =>
+                  setSearchParams((prevState) => ({
+                    ...prevState,
+                    min_room_price: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col grow">
+              <label htmlFor="max_room_price" className="mb-2 font-medium">
+                Max
+              </label>
+              <input
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                type="number"
+                id="room_price"
+                value={searchParams.max_room_price}
+                onChange={(e) =>
+                  setSearchParams((prevState) => ({
+                    ...prevState,
+                    max_room_price: e.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
         </div>
         <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
