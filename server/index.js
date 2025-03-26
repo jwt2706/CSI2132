@@ -18,7 +18,6 @@ app.get("/availability/rooms", async (req, res) => {
       hotel_room_amount,
       room_price,
     } = req.query;
-    console.log(req.query);
     const query = {
       name: "fetch-available-rooms",
       text: `
@@ -27,7 +26,7 @@ app.get("/availability/rooms", async (req, res) => {
                     FROM rooms r
                     JOIN hotels h ON h.id = r.hotel_id
                     GROUP BY h.hotel_name)
-            SELECT h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
+            SELECT h.id, h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             FROM rooms r
             JOIN hotels h ON r.hotel_id = h.id
             JOIN hotelchains hc ON hc.id = h.hotel_chain_id
@@ -40,7 +39,7 @@ app.get("/availability/rooms", async (req, res) => {
               AND (h.category = $6 OR $6 IS NULL)
               AND (r.price = $7 OR $7 IS NULL)
               AND (n.num_rooms = $8 OR $8 IS NULL)
-            GROUP BY h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
+            GROUP BY h.id, h.hotel_name, r.room_num, r.capacity, h.area, hc.hotel_chain_name, h.category, r.price
             HAVING COUNT(a.room_available_date) IN (SELECT COUNT(date_range) FROM date_series)`,
       values: [
         start_date,
@@ -80,6 +79,8 @@ app.put("/bookings", async (req, res) => {
       ],
     };
     const booking = await pool.query(query);
+    console.log(booking);
+
     res.json(booking.rows[0]);
   } catch (err) {
     console.error(err.message);

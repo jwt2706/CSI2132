@@ -47,16 +47,19 @@ const CustomerRoomBooking = () => {
         headers: { "Content-Type": "application/json" },
       }).then((res) => res.json());
 
+      console.log(response);
       setAvailableRooms(response);
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  const bookRoom = async (roomId) => {
+  const bookRoom = async (hotel_id, room_num) => {
     try {
       const bookingDetails = {
-        room_id: roomId,
+        hotel_id: hotel_id,
+        room_num: room_num,
+        customer_id: 1,
         start_date: searchParams.start_date,
         end_date: searchParams.end_date,
       };
@@ -66,6 +69,8 @@ const CustomerRoomBooking = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingDetails),
       });
+
+      console.log(response);
 
       if (response.ok) {
         alert("Room successfully booked!");
@@ -203,16 +208,17 @@ const CustomerRoomBooking = () => {
           <ul className="space-y-4">
             {availableRooms.map((room) => (
               <li
-                key={room.id}
+                key={[room.id, room.room_num]}
                 className="p-4 bg-gray-800 rounded-lg shadow-md flex justify-between items-center"
               >
                 <div>
-                  <p>Room ID: {room.id}</p>
+                  <p>Hotel: {room.hotel_name}</p>
+                  <p>Room Number: {room.room_num}</p>
                   <p>Capacity: {room.capacity}</p>
                   <p>Price: ${room.price}</p>
                 </div>
                 <button
-                  onClick={() => bookRoom(room.id)}
+                  onClick={() => bookRoom(room.id, room.room_num)}
                   className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
                 >
                   Book Room
