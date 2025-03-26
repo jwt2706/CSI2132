@@ -5,6 +5,7 @@ import TurnBookingToRenting from "./components/TurnBookingToRenting";
 import DirectRenting from "./components/DirectRenting";
 import InsertPayment from "./components/InsertPayment";
 import ManageCustomers from "./components/ManageCustomers";
+import ViewTables from "./components/ViewTables";
 
 function App() {
   const [view, setView] = useState("customer"); // customer view is the default
@@ -16,6 +17,8 @@ function App() {
         {view === "customer" && (
           <>
             <CustomerRoomBooking />
+            <br />
+            <ViewTables />
           </>
         )}
         {view === "employee" && (
