@@ -87,6 +87,7 @@ const CustomerRoomBooking = () => {
         customer_id: 1,
         start_date: searchParams.start_date,
         end_date: searchParams.end_date,
+        employee_id: 1,
       };
 
       const response = await fetch("http://localhost:8080/rentings", {
@@ -309,7 +310,7 @@ const CustomerRoomBooking = () => {
           <div className="flex flex-row space-x-4">
             <div className="flex flex-col grow">
               <label htmlFor="min_room_price" className="mb-2 font-medium">
-                Min
+                Min $
               </label>
               <input
                 className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
@@ -327,7 +328,7 @@ const CustomerRoomBooking = () => {
             </div>
             <div className="flex flex-col grow">
               <label htmlFor="max_room_price" className="mb-2 font-medium">
-                Max
+                Max $
               </label>
               <input
                 className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
