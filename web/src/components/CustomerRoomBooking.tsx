@@ -205,9 +205,7 @@ const CustomerRoomBooking = () => {
                 }))
               }
             >
-              <option disabled value="">
-                Select Room Capacity
-              </option>
+              <option value="">Any</option>
               {capacities.map((capacity) => (
                 <option key={capacity} value={capacity}>
                   {capacity}
@@ -229,9 +227,7 @@ const CustomerRoomBooking = () => {
                 }))
               }
             >
-              <option disabled value="">
-                Select Hotel Area
-              </option>
+              <option value="">Any</option>
               {areas.map((area) => (
                 <option key={area} value={area}>
                   {area}
@@ -273,9 +269,7 @@ const CustomerRoomBooking = () => {
                 }))
               }
             >
-              <option disabled value="">
-                Select Hotel Chain
-              </option>
+              <option value="">Any</option>
               {hotelChainNames.map((hotelChainName) => (
                 <option key={hotelChainName} value={hotelChainName}>
                   {hotelChainName}
@@ -297,9 +291,7 @@ const CustomerRoomBooking = () => {
                 }))
               }
             >
-              <option disabled value="">
-                Select Hotel Category
-              </option>
+              <option value="">Any</option>
               {categories.map((category) => (
                 <option key={category} value={category}>
                   {category}
