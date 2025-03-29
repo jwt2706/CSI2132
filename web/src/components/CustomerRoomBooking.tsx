@@ -79,6 +79,38 @@ const CustomerRoomBooking = () => {
     }
   };
 
+  const rentRoom = async (hotel_id: number, room_num: number) => {
+    try {
+      const rentingDetails = {
+        hotel_id: hotel_id,
+        room_num: room_num,
+        customer_id: 1,
+        start_date: searchParams.start_date,
+        end_date: searchParams.end_date,
+      };
+
+      const response = await fetch("http://localhost:8080/rentings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rentingDetails),
+      });
+
+      console.log(response);
+
+      if (response.ok) {
+        alert("Room successfully booked!");
+      } else {
+        alert("Failed to book room.");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(err);
+      }
+    }
+  };
+
   const bookRoom = async (hotel_id: number, room_num: number) => {
     try {
       const bookingDetails = {
@@ -332,12 +364,20 @@ const CustomerRoomBooking = () => {
                   <p>Capacity: {room.capacity}</p>
                   <p>Price: ${room.price}</p>
                 </div>
-                <button
-                  onClick={() => bookRoom(room.id, room.room_num)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-                >
-                  Book Room
-                </button>
+                <div className="flex flex-col space-y-3">
+                  <button
+                    onClick={() => bookRoom(room.id, room.room_num)}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                  >
+                    Book Room
+                  </button>
+                  <button
+                    onClick={() => rentRoom(room.id, room.room_num)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  >
+                    Rent Room
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
