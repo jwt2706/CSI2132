@@ -8,6 +8,14 @@ const TurnBookingToRenting = () => {
   const [rentings, setRentings] = useState([]); // Add state for rentings
   const [deleteId, setDeleteId] = useState(""); // Add state for delete ID
   const [deleteType, setDeleteType] = useState("booking"); // Add state for delete type (booking or renting)
+  const [newRenting, setNewRenting] = useState({
+    customerId: "",
+    hotelId: "",
+    roomNum: "",
+    startDate: "",
+    endDate: "",
+    employeeId: "",
+  });
 
   const handleFetchBookings = async () => {
     try {
@@ -100,6 +108,40 @@ const TurnBookingToRenting = () => {
     setActiveTab("convert");
   };
 
+  const handleCreateRenting = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/rentings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_id: newRenting.customerId,
+          hotel_id: newRenting.hotelId,
+          room_num: newRenting.roomNum,
+          start_date: newRenting.startDate,
+          end_date: newRenting.endDate,
+          employee_id: newRenting.employeeId,
+        }),
+      });
+
+      if (response.ok) {
+        alert("New renting created successfully!");
+        setNewRenting({
+          customerId: "",
+          hotelId: "",
+          roomNum: "",
+          startDate: "",
+          endDate: "",
+          employeeId: "",
+        });
+      } else {
+        alert("Failed to create renting.");
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
     if (tab === "viewAll") {
@@ -124,6 +166,12 @@ const TurnBookingToRenting = () => {
         </button>
         <button className={`px-4 py-2 ${activeTab === "delete" ? "bg-cyan-700" : "bg-gray-700"} text-white rounded-md mx-2`} onClick={() => handleTabSwitch("delete")}>
           Delete by ID
+        </button>
+        <button
+          className={`px-4 py-2 ${activeTab === "createRenting" ? "bg-cyan-700" : "bg-gray-700"} text-white rounded-md mx-2`}
+          onClick={() => handleTabSwitch("createRenting")}
+        >
+          Create Renting
         </button>
       </div>
       {activeTab === "convert" && (
@@ -287,6 +335,92 @@ const TurnBookingToRenting = () => {
             </select>
           </div>
           <button className="w-full bg-red-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-red-800 focus:ring-2 focus:ring-red-500 focus:outline-none">Delete</button>
+        </form>
+      )}
+      {activeTab === "createRenting" && (
+        <form className="space-y-4" onSubmit={handleCreateRenting}>
+          <h2 className="text-xl font-bold">Create New Renting</h2>
+          <div className="flex flex-col">
+            <label htmlFor="customer_id" className="mb-2 font-medium">
+              Customer ID
+            </label>
+            <input
+              type="text"
+              id="customer_id"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.customerId}
+              onChange={(e) => setNewRenting({ ...newRenting, customerId: e.target.value })}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="hotel_id" className="mb-2 font-medium">
+              Hotel ID
+            </label>
+            <input
+              type="text"
+              id="hotel_id"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.hotelId}
+              onChange={(e) => setNewRenting({ ...newRenting, hotelId: e.target.value })}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="room_num" className="mb-2 font-medium">
+              Room Number
+            </label>
+            <input
+              type="text"
+              id="room_num"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.roomNum}
+              onChange={(e) => setNewRenting({ ...newRenting, roomNum: e.target.value })}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="start_date" className="mb-2 font-medium">
+              Start Date
+            </label>
+            <input
+              type="date"
+              id="start_date"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.startDate}
+              onChange={(e) => setNewRenting({ ...newRenting, startDate: e.target.value })}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="end_date" className="mb-2 font-medium">
+              End Date
+            </label>
+            <input
+              type="date"
+              id="end_date"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.endDate}
+              onChange={(e) => setNewRenting({ ...newRenting, endDate: e.target.value })}
+              required
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="employee_id" className="mb-2 font-medium">
+              Employee ID
+            </label>
+            <input
+              type="text"
+              id="employee_id"
+              className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+              value={newRenting.employeeId}
+              onChange={(e) => setNewRenting({ ...newRenting, employeeId: e.target.value })}
+              required
+            />
+          </div>
+          <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
+            Create Renting
+          </button>
         </form>
       )}
     </div>
