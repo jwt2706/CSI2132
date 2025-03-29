@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import CustomerRoomBooking from "./components/CustomerRoomBooking";
-import TurnBookingToRenting from "./components/TurnBookingToRenting";
-import DirectRenting from "./components/DirectRenting";
-import InsertPayment from "./components/InsertPayment";
+import BookingRenting from "./components/BookingRenting";
 import ManageCustomers from "./components/ManageCustomers";
 import ViewTables from "./components/ViewTables";
 
@@ -23,11 +21,7 @@ function App() {
         )}
         {view === "employee" && (
           <>
-            <TurnBookingToRenting />
-            <br />
-            <DirectRenting />
-            <br />
-            <InsertPayment />
+            <BookingRenting />
             <br />
             <ManageCustomers />
           </>

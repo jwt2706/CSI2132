@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const TurnBookingToRenting = () => {
+const BookingRenting = () => {
   const [activeTab, setActiveTab] = useState("convert");
   const [bookingId, setBookingId] = useState("");
   const [employeeId, setEmployeeId] = useState(""); // Add state for employee ID
@@ -339,7 +339,7 @@ const TurnBookingToRenting = () => {
       )}
       {activeTab === "createRenting" && (
         <form className="space-y-4" onSubmit={handleCreateRenting}>
-          <h2 className="text-xl font-bold">Create New Renting</h2>
+          <h2 className="text-xl font-bold">Create Manual Renting</h2>
           <div className="flex flex-col">
             <label htmlFor="customer_id" className="mb-2 font-medium">
               Customer ID
@@ -418,6 +418,42 @@ const TurnBookingToRenting = () => {
               required
             />
           </div>
+          <div className="p-4 border border-gray-700 rounded-md bg-gray-800">
+            <h3 className="text-lg font-bold mb-3">Payment Information</h3>
+            <div className="flex flex-col mb-3">
+              <label htmlFor="credit_card_number" className="mb-2 font-medium">
+                Credit Card Number
+              </label>
+              <input
+                type="text"
+                id="credit_card_number"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                placeholder="1234 5678 9012 3456"
+              />
+            </div>
+            <div className="flex flex-col mb-3">
+              <label htmlFor="expiration_date" className="mb-2 font-medium">
+                Expiration Date
+              </label>
+              <input
+                type="text"
+                id="expiration_date"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                placeholder="MM/YY"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="security_code" className="mb-2 font-medium">
+                Security Code
+              </label>
+              <input
+                type="text"
+                id="security_code"
+                className="block w-full p-3 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
+                placeholder="123"
+              />
+            </div>
+          </div>
           <button className="w-full bg-cyan-700 text-white py-3 px-6 rounded-md font-semibold hover:bg-cyan-800 focus:ring-2 focus:ring-cyan-500 focus:outline-none">
             Create Renting
           </button>
@@ -427,4 +463,4 @@ const TurnBookingToRenting = () => {
   );
 };
 
-export default TurnBookingToRenting;
+export default BookingRenting;
